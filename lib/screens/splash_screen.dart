@@ -1,9 +1,8 @@
 import 'dart:async';
-import 'package:cnii_sentinel_flutter/screens/dashboard_screen.dart';
-import 'package:cnii_sentinel_flutter/widgets/ripple_loader.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:cnii_sentinel_flutter/main.dart'; // Import to access DashboardScreen
+import 'package:cnii_sentinel_flutter/screens/main_layout.dart';
+import 'package:cnii_sentinel_flutter/widgets/ripple_loader.dart';
+import 'package:cnii_sentinel_flutter/theme/app_colors.dart';
 
 class SentinelSplashScreen extends StatefulWidget {
   const SentinelSplashScreen({super.key});
@@ -36,9 +35,8 @@ class _SentinelSplashScreenState extends State<SentinelSplashScreen>
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
 
-    // 2. The Timer: Navigate to Dashboard after 4 seconds
+    // 2. The Timer: Navigate to MainLayout after 4 seconds
     Timer(const Duration(seconds: 4), () {
-      // Use pushReplacement so the user can't go "back" to the splash screen
       Navigator.of(context).pushReplacement(_createRoute());
     });
   }
@@ -49,10 +47,10 @@ class _SentinelSplashScreenState extends State<SentinelSplashScreen>
     super.dispose();
   }
 
-  // A Custom "Fade" Route Transition for a smooth effect
+  // A Custom "Fade" Route Transition to the new MainLayout shell
   Route _createRoute() {
     return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => const DashboardScreen(),
+      pageBuilder: (context, animation, secondaryAnimation) => const MainLayout(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(opacity: animation, child: child);
       },
@@ -63,37 +61,45 @@ class _SentinelSplashScreenState extends State<SentinelSplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF121212), // Dark Background
+      backgroundColor: AppColors.background,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // --- THE ANIMATED SVG ---
-            const RippleLoader(
-      size: 150,
-      color: Color(0xFF00FF41), // Matrix Green
-    ),
+            // Applied your unused _scaleAnimation to the RippleLoader
+            ScaleTransition(
+              scale: _scaleAnimation,
+              child: const RippleLoader(
+                size: 150,
+                color: AppColors.primary,
+              ),
+            ),
             
             const SizedBox(height: 50),
             
-            // --- LOADING INDICATORS ---
-            const Text(
-              "INITIALIZING SENTINEL...",
-              style: TextStyle(
-                color: Color(0xFF00FF41),
-                fontFamily: 'Courier', 
-                letterSpacing: 3.0,
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
+            // Applied your unused _fadeAnimation to the pulsing text
+            FadeTransition(
+              opacity: _fadeAnimation,
+              child: const Text(
+                "INITIALIZING SENTINEL...",
+                style: TextStyle(
+                  color: AppColors.primary,
+                  fontFamily: 'Courier', 
+                  letterSpacing: 3.0,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
+            
             const SizedBox(height: 20),
+            
             // Minimalist Progress Bar
             SizedBox(
               width: 160,
               child: LinearProgressIndicator(
-                backgroundColor: Colors.grey[900],
-                valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF00FF41)),
+                backgroundColor: AppColors.surface,
+                valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
                 minHeight: 2,
               ),
             ),
